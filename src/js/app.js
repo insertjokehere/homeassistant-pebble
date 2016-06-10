@@ -27,10 +27,10 @@ ajax(
         for (i=0; i<data.length; ++i) {
             entity = new Entity.Entity(data[i]);
             entities[entity.entity_id] = entity;
-            if (entity.visible) {
+            if (entity.visible()) {
                 menu_items.push({
                     title: entity.display_name,
-                    subtitle: entity.state
+                    subtitle: entity.state()
                 });
             }
         }
