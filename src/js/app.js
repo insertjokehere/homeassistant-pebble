@@ -7,7 +7,7 @@
 var ajax = require('ajax');
 var UI = require('ui');
 var Vector2 = require('vector2');
-var Entity = require
+var Entity = require('entity');
 
 var entities = {};
 

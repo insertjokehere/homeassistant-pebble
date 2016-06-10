@@ -13,4 +13,4 @@ Entity.prototype.state = function () {
     return this._data['state'];
 }
 
-exports.Entity = Entity;
+module.exports.Entity = Entity;
