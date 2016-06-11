@@ -1,3 +1,6 @@
+var UI = require('ui');
+var entities;
+
 function startsWith(str, word) {
     return str.lastIndexOf(word, 0) === 0;
 }
@@ -23,6 +26,13 @@ Entity.prototype.icon = function () {
 Entity.prototype.select = function () {
 }
 
+Entity.prototype.show = function () {
+}
+
+Entity.prototype.subentities = function () {
+    return []
+}
+
 module.exports.Entity = Entity;
 
 function Group(data) {
@@ -32,6 +42,57 @@ function Group(data) {
 Group.prototype = Object.create(Entity.prototype);
 
 Group.prototype.state = function() { return }
+
+Group.prototype.subentities = function() {
+    return this._attributes['entity_id'];
+}
+
+Group.prototype.select = function () {
+    this.show();
+}
+
+Group.prototype.show = function() {
+    var menu_items = [];
+
+    var group_items = this.subentities();
+
+    var _subentities = [];
+    
+    for (var i in group_items) {
+	var entity_id = group_items[i];
+	console.log(entity_id);
+	entity = entities[entity_id];
+	console.log(entity);
+
+	console.log(entity.entity_id);
+
+	if (entity) {
+	    _subentities.push(entity);
+
+            if (entity.visible()) {
+		menu_items.push({
+                    title: entity.display_name,
+                    subtitle: entity.state(),
+		    icon: entity.icon()
+		});
+            }
+	}
+    }
+    
+    var menu = new UI.Menu({
+        sections: [{
+            items: menu_items
+        }]
+    });
+
+    var group = this;
+
+    menu.on('select', function(e) {
+	_subentities[e.itemIndex].select();
+    });
+
+    menu.show();
+}
 
 Group.prototype.constructor = Group;
 
@@ -53,7 +114,6 @@ Switch.prototype.select = function () {
 
 function from_data(data) {
     entity_id = data['entity_id'];
-    console.log(entity_id);
     if (startsWith(entity_id, 'group.')) {
 	return new Group(data);
     } else if (startsWith(entity_id, 'switch.')) {
@@ -64,3 +124,6 @@ function from_data(data) {
 }
 
 module.exports.from_data = from_data;
+module.exports.set_entities = function (all_entities) {
+    entities = all_entities;
+}

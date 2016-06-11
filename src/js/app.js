@@ -23,28 +23,41 @@ ajax(
      type: 'json'},
     function(data) {
         var menu_items = [];
+	var top_entities = [];
 
         for (i=0; i<data.length; ++i) {
-            entity = Entity.from_data(data[i]);
+            entity = Entity.from_data(data[i], entities);
             entities[entity.entity_id] = entity;
-	    console.log(entity.state());
-            if (entity.visible()) {
-                menu_items.push({
-                    title: entity.display_name,
-                    subtitle: entity.state(),
-		    icon: entity.icon()
-                });
-            }
-        }
+	    top_entities.push(entity.entity_id);
+	}
 
-        var menu = new UI.Menu({
-            sections: [{
-                items: menu_items
-            }]
-        });
+	for (var entity_id in entities) {
+	    var entity = entities[entity_id];
+	    if (entity.visible()) {
+		var subentities = entity.subentities();
+		for (var d in subentities) {
+		    var idx = top_entities.indexOf(subentities[d]);
+		    if (idx > -1) {
+			console.log(top_entities[idx]);
+			top_entities.splice(idx, 1);
+		    }
+		}
+	    }
+	}
 
+	console.log(top_entities.length);
+
+	Entity.set_entities(entities);
+
+	var TopGroup = new Entity.Group({
+	    'attributes': {
+		'entity_id': top_entities
+	    },
+	    'entity_id': 'group.toplevel'
+	});
+
+	TopGroup.show();
         main.hide();
-        menu.show();
 
     }
 );
