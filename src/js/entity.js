@@ -52,6 +52,7 @@ Group.prototype.select = function () {
 }
 
 Group.prototype.show = function() {
+    console.log("Showing " + this.entity_id);
     var menu_items = [];
 
     var group_items = this.subentities();
@@ -60,16 +61,13 @@ Group.prototype.show = function() {
     
     for (var i in group_items) {
 	var entity_id = group_items[i];
-	console.log(entity_id);
 	entity = entities[entity_id];
-	console.log(entity);
-
-	console.log(entity.entity_id);
 
 	if (entity) {
-	    _subentities.push(entity);
+	    console.log(entity.entity_id);
 
             if (entity.visible()) {
+		_subentities.push(entity);
 		menu_items.push({
                     title: entity.display_name,
                     subtitle: entity.state(),

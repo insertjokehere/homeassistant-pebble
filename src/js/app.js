@@ -34,11 +34,12 @@ ajax(
 	for (var entity_id in entities) {
 	    var entity = entities[entity_id];
 	    if (entity.visible()) {
+		console.log(entity.entity_id);
 		var subentities = entity.subentities();
 		for (var d in subentities) {
+		    console.log("- " + subentities[d]);
 		    var idx = top_entities.indexOf(subentities[d]);
 		    if (idx > -1) {
-			console.log(top_entities[idx]);
 			top_entities.splice(idx, 1);
 		    }
 		}
