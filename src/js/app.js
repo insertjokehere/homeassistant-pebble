@@ -25,12 +25,14 @@ ajax(
         var menu_items = [];
 
         for (i=0; i<data.length; ++i) {
-            entity = new Entity.Entity(data[i]);
+            entity = Entity.from_data(data[i]);
             entities[entity.entity_id] = entity;
+	    console.log(entity.state());
             if (entity.visible()) {
                 menu_items.push({
                     title: entity.display_name,
-                    subtitle: entity.state()
+                    subtitle: entity.state(),
+		    icon: entity.icon()
                 });
             }
         }
