@@ -46,8 +46,6 @@ ajax(
 	    }
 	}
 
-	console.log(top_entities.length);
-
 	Entity.set_entities(entities);
 
 	var TopGroup = new Entity.Group({

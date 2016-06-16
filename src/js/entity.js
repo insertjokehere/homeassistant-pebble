@@ -1,4 +1,5 @@
 var UI = require('ui');
+var ajax = require('ajax');
 var entities;
 
 function startsWith(str, word) {
@@ -31,6 +32,32 @@ Entity.prototype.show = function () {
 
 Entity.prototype.subentities = function () {
     return []
+}
+
+Entity.prototype.update_state = function (new_state, cb) {
+    ajax({
+	url: 'https://house.hhome.me/api/states/' + this.entity_id,
+	method: 'POST',
+	type: "json",
+	data: {
+	    "state": new_state
+	}
+    }, cb, function (data, status) {
+	console.log("request failed " + status);
+	console.log(JSON.stringify(data));
+    })
+}
+
+Entity.prototype.call_service = function(domain, service, data, cb) {
+    ajax({
+	url: 'https://house.hhome.me/api/services/' + domain + '/' + service,
+	method: 'POST',
+	type: "json",
+	data: data
+    }, cb, function (data, status) {
+	console.log("request failed " + status);
+	console.log(JSON.stringify(data));
+    })
 }
 
 module.exports.Entity = Entity;
@@ -107,7 +134,13 @@ Switch.prototype.icon = function () {
 }
 Switch.prototype.select = function () {
     var newstate = this.state() == 'on' ? 'off': 'on'
-    console.log(newstate);
+    this.call_service('homeassistant', 'turn_' + newstate,
+		      { 'entity_id': this.entity_id },
+		      function (data) {
+			  console.log("Update success");
+			  console.log(JSON.stringify(data));
+			  this._data['state'] = newstate;
+    });
 }
 
 function from_data(data) {
